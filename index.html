@@ -1,0 +1,796 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Maggie Web</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #fff3cd;
+        }
+
+        header {
+            background-color: #e63946;
+            color: white;
+            padding: 10px 20px;
+            position: relative;
+        }
+
+        .navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo img {
+            width: 100px;
+        }
+
+        .search-bar {
+            display: flex;
+        }
+
+        .search-bar input {
+            padding: 5px;
+            width: 300px;
+        }
+
+        .search-bar button {
+            padding: 5px;
+            background-color: #ffd700;
+            border: none;
+            cursor: pointer;
+        }
+
+        .nav-links a {
+            color: white;
+            margin: 0 10px;
+            text-decoration: none;
+        }
+
+        .cart {
+            position: relative;
+            cursor: pointer;
+        }
+
+        .cart-box {
+            position: absolute;
+            top: 100%;
+            right: 0;
+            background-color: #ffffff;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+            display: none;
+            width: 300px;
+            z-index: 1000;
+        }
+
+        .cart-box.active {
+            display: block;
+        }
+
+        .cart-box ul {
+            list-style-type: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .cart-box li {
+            border-bottom: 1px solid #ddd;
+            padding: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .cart-box li:last-child {
+            border-bottom: none;
+        }
+
+        .cart-box img {
+            width: 50px;
+            height: auto;
+        }
+
+        .cart-box button {
+            background-color: #e63946;
+            color: white;
+            border: none;
+            padding: 5px;
+            cursor: pointer;
+        }
+
+        main {
+            padding: 20px;
+        }
+
+        .banner {padding: 10px;
+            position: relative;
+            width: 100%;
+            overflow: hidden;
+            background-color: #fff;
+            margin-bottom: 60px;
+        }
+
+        .slides {
+            width: 1500px;
+            height: 400px;
+            border: 2px solid blue;
+            display: flex;
+            transition: transform 0.5s ease-in-out;
+            width: 1000%;
+        }
+
+        .slide {
+            min-width: 100%;
+            box-sizing: border-box;
+        }
+
+        .slides img {
+            width: 1500px;
+            height: 400px;
+            object-fit: cover;
+        }
+
+        .prev, .next {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            background-color: rgba(0, 0, 0, 0.5);
+            color: white;
+            border: none;
+            padding: 10px;
+            cursor: pointer;
+        }
+
+        .prev {
+            left: 10px;
+        }
+
+        .next {
+            right: 10px;
+        }
+
+        .products {
+            display: grid;
+            grid-template-columns: repeat(4, 300px);
+            
+            flex-wrap: wrap;
+            gap: 40px;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .product {
+            border-radius: 40px;
+            height: 500px;
+            border: 1px solid #ddd;
+            padding: 10px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            box-shadow: 5px 10px 18px #888888;
+            justify-content: space-around;
+            text-align: center;
+          
+            background-color: #fff;
+        }
+
+        .product img {
+            width: 100%;
+            height: 300px;
+        }
+
+        @media (max-width : 1200px) {
+            .products {
+           
+            grid-template-columns: repeat(3, 300px);
+            
+        
+        }
+        }
+        @media (max-width : 1000px) {
+            .products {
+           
+            grid-template-columns: repeat(2, 300px);
+            
+        
+        }
+        }
+        @media (max-width : 670px) {
+            .products {
+           
+            grid-template-columns: repeat(1, 300px);
+            
+        
+        }
+        }
+
+
+        footer {
+            background-color: #e63946;
+            color: white;
+            text-align: center;
+            padding: 10px;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .navbar {
+                flex-direction: column;
+            }
+
+            .search-bar input {
+                width: 100%;
+            }
+
+            .products {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .product {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+   
+    <header>
+        <div class="navbar">
+            <div class="logo">
+                <a href="#"><img src="https://upload.wikimedia.org/wikipedia/commons/1/10/Logo_Maggi.png" alt="Maggie Logo"></a>
+            </div>
+            <div class="search-bar">
+                <input type="text" id="search-input" placeholder="Search">
+                <button onclick="searchProducts()">Search</button>
+            </div>
+            <div class="nav-links">
+                <a href="#">Sign In</a>
+                <a href="#">Orders</a>
+                <div class="cart" onclick="toggleCart()">
+                    <a href="#">Cart (<span id="cart-count">0</span>)</a>
+                    <div class="cart-box" id="cart-box">
+                        <ul id="cart-items"></ul>
+                        <div style="padding: 10px; text-align: right;">
+                            <strong>Total: $<span id="cart-total">0.00</span></strong>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+
+    <main>
+        <div class="banner">
+            <div class="slides">
+                <div class="slide"><img src="https://pbs.twimg.com/media/CTVwn4AU8AAWPOu.png" alt="Image 1"></div>
+                <div class="slide"><img src="https://i.ytimg.com/vi/Imn08HIsiNo/sddefault.jpg" alt="Image 2"></div>
+                <div class="slide"><img src="https://gumlet-images.assettype.com/afaqs%2F2024-05%2Fe5dd7760-16a4-4627-84c5-a4bdf3fa63c3%2FMaggi.png?w=1200&auto=format%2Ccompress&ogImage=true" alt="Image 3"></div>
+                <div class="slide"><img src="https://rukminim2.flixcart.com/image/850/1000/xif0q/noodle/e/k/e/-original-imagqju88dfyaggq.jpeg?q=90" alt="Image 4"></div>
+                <div class="slide"><img src="https://rukminim2.flixcart.com/image/850/1000/knknc7k0/noodle/k/h/n/70-minute-instant-noodles-masala-instant-noodles-maggi-original-imag28ymkggafgpz.jpeg?q=90&crop=false" alt="Image 5"></div>
+                <div class="slide"><img src="https://m.media-amazon.com/images/I/81ORGm+es8L._AC_UF1000,1000_QL80_DpWeblab_.jpg" alt="Image 6"></div>
+                <div class="slide"><img src="https://r-mart.co.in/images/thumbs/0031673_maggi-special-masala-spicy-280g_510.jpeg" alt="Image 7"></div>
+                <div class="slide"><img src="https://gumlet-images.assettype.com/afaqs%2F2022-11%2F528682f7-a810-484e-a0f7-ac0d5eafd5f9%2FKFC_Popcorn_Bowl_Made_with_Maggi.jpg?rect=0%2C498%2C725%2C408&w=1200&auto=format%2Ccompress&ogImage=true" alt="Image 8"></div>
+                <div class="slide"><img src="https://m.media-amazon.com/images/I/81OQAczwavL.jpg" alt="Image 9"></div>
+                <div class="slide"><img src="https://m.media-amazon.com/images/I/81cm42OuOBL._AC_UF1000,1000_QL80_.jpg" alt="Image 10"></div>
+            </div>
+            <button class="prev" onclick="moveSlide(-1)">&#10094;</button>
+            <button class="next" onclick="moveSlide(1)">&#10095;</button>
+        </div>
+        <div class="products" id="product-list">
+    
+        </div>
+    </main>
+
+
+    <footer>
+        <p>&copy; 2024 Maggie Clone</p>
+    </footer>
+
+    <script>
+        let slideIndex = 0;
+        const slides = document.querySelector('.slides');
+        const totalSlides = document.querySelectorAll('.slide').length;
+
+        function showSlide(index) {
+            slideIndex = (index + totalSlides) % totalSlides;
+            slides.style.transform = `translateX(${-slideIndex * 100}%)`;
+        }
+
+        function moveSlide(step) {
+            showSlide(slideIndex + step);
+        }
+
+        setInterval(() => {
+            moveSlide(1);
+        }, 3000);
+
+        const products = [
+
+
+        { name: 'Maggie Masala', price: '$10.00', img: 'https://m.media-amazon.com/images/I/71Hiy0dmhlL.jpg' },
+            { name: 'Maggie 4eerwr', price: '$12.00', img: 'https://www.bigbasket.com/media/uploads/p/xxl/40237235_3-maggi-2-minute-instant-noodles-veggie-masala-made-with-quality-spices-rich-in-fibre.jpg' },
+            { name: 'Maggie safsdfg4', price: '$12.00', img: 'https://www.bigbasket.com/media/uploads/p/xxl/40237235_3-maggi-2-minute-instant-noodles-veggie-masala-made-with-quality-spices-rich-in-fibre.jpg' },
+            { name: 'Maggie 4eerwr', price: '$12.00', img: 'https://m.media-amazon.com/images/I/81dpDHc95AL._SL1500_.jpg' },
+            { name: 'Maggie 4eerwr', price: '$12.00', img: 'https://m.media-amazon.com/images/I/81dpDHc95AL._SL1500_.jpg' },
+            { name: 'Maggie nsdjyw98z', price: '$12.00', img: 'https://www.bigbasket.com/media/uploads/p/xxl/119705_12-maggi-hot-sweet-tomato-chilli-sauce.jpg' },
+            { name: 'Maggie llk9u9', price: '$12.00', img: 'https://www.bigbasket.com/media/uploads/p/xxl/119705_12-maggi-hot-sweet-tomato-chilli-sauce.jpg' },
+            { name: 'Maggie uuyayv', price: '$12.00', img: 'https://cdn.shopify.com/s/files/1/0627/6585/9031/products/Screenshot2022-03-03at5.55.28PM_1200x.png?v=1646301344' },
+            { name: 'Maggie hshfyasjk', price: '$12.00', img: 'https://cdn.shopify.com/s/files/1/0627/6585/9031/products/Screenshot2022-03-03at5.55.28PM_1200x.png?v=1646301344' },
+            { name: 'Maggie uuyayv', price: '$12.00', img: 'https://i5.walmartimages.com/seo/Maggi-2-Minute-Masala-Indian-Noodles-9-87-oz_c9f57afc-a6ac-436d-8747-9f26aa0e7bf6.7a9c3c912aa17d7d48f760d3df0843a9.jpeg?odnHeight=768&odnWidth=768&odnBg=FFFFFF' },
+            { name: 'Maggie 8y42huh8', price: '$12.00', img: 'https://i5.walmartimages.com/seo/Maggi-2-Minute-Masala-Indian-Noodles-9-87-oz_c9f57afc-a6ac-436d-8747-9f26aa0e7bf6.7a9c3c912aa17d7d48f760d3df0843a9.jpeg?odnHeight=768&odnWidth=768&odnBg=FFFFFF' },
+            { name: 'Maggie v nbsj', price: '$12.00', img: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ7sus2IB6T7WmKExjUJPuZ6MUaVLfDSCTvAQ&s' },
+            { name: 'Maggie diuadi', price: '$12.00', img: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ7sus2IB6T7WmKExjUJPuZ6MUaVLfDSCTvAQ&s' },
+            { name: 'Maggie diuadi', price: '$12.00', img: 'https://5.imimg.com/data5/VO/HT/PM/SELLER-5215417/maggi-masala-cuppa-noodles-70g-500x500.jpg' },
+            { name: 'Maggie 823yg7', price: '$12.00', img: 'https://5.imimg.com/data5/VO/HT/PM/SELLER-5215417/maggi-masala-cuppa-noodles-70g-500x500.jpg' },
+            { name: 'Maggie nsdjyw98z', price: '$12.00', img: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTg9vMAhD5NyN-Hy7q7nqBSDG2ziHDT5ugAJA&s' },
+            { name: 'Maggie safsdfg4', price: '$12.00', img: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTg9vMAhD5NyN-Hy7q7nqBSDG2ziHDT5ugAJA&s' },
+            { name: 'Maggie 8y42huh8', price: '$12.00', img: 'https://www.bigbasket.com/media/uploads/p/xxl/40237235_3-maggi-2-minute-instant-noodles-veggie-masala-made-with-quality-spices-rich-in-fibre.jpg' },
+            { name: 'Maggie llk9u9', price: '$12.00', img: 'https://www.bigbasket.com/media/uploads/p/xxl/40237235_3-maggi-2-minute-instant-noodles-veggie-masala-made-with-quality-spices-rich-in-fibre.jpg' },
+            { name: 'Maggie v nbsj', price: '$12.00', img: 'https://www.bigbasket.com/media/uploads/p/xxl/40136266_7-maggi-special-masala-noodles.jpg' },
+            { name: 'Maggie hshfyasjk', price: '$12.00', img: 'https://www.bigbasket.com/media/uploads/p/xxl/40136266_7-maggi-special-masala-noodles.jpg' },
+            { name: 'Maggie 4eerwr', price: '$12.00', img: 'https://www.maggi.in/sites/default/files/styles/product_image_tab_landscape_384_768/public/maggi-masala-veg-617x900.png?itok=GkuxfCFm' },
+            { name: 'Maggie823yg7', price: '$12.00', img: 'https://www.maggi.in/sites/default/files/styles/product_image_tab_landscape_384_768/public/maggi-masala-veg-617x900.png?itok=GkuxfCFm' },
+            { name: 'Maggie 823yg7', price: '$12.00', img: 'https://s3.ap-south-1.amazonaws.com/diingdong/1611308669_31W-0vUvpnL.jpg' },
+            { name: 'Maggie 8y42huh8', price: '$12.00', img: 'https://s3.ap-south-1.amazonaws.com/diingdong/1611308669_31W-0vUvpnL.jpg' },
+            { name: 'Maggie uuyayv', price: '$12.00', img: 'https://www.bigbasket.com/media/uploads/p/xxl/119705_12-maggi-hot-sweet-tomato-chilli-sauce.jpg' },
+            { name: 'Maggie diuadi', price: '$12.00', img: 'https://www.bigbasket.com/media/uploads/p/xxl/119705_12-maggi-hot-sweet-tomato-chilli-sauce.jpg' },
+            { name: 'Maggie hshfyasjk', price: '$12.00', img: 'https://m.media-amazon.com/images/I/8116o8ISrfL._AC_UF894,1000_QL80_.jpg' },
+            { name: 'Maggie nsdjyw98z', price: '$12.00', img: 'https://m.media-amazon.com/images/I/8116o8ISrfL._AC_UF894,1000_QL80_.jpg' },
+            { name: 'Maggie safsdfg4', price: '$12.00', img: 'https://m.media-amazon.com/images/I/71hAp8MqgSL.jpg' },
+            { name: 'Maggie ', price: '$12.00', img: 'https://m.media-amazon.com/images/I/71hAp8MqgSL.jpg' },
+            { name: 'Maggie 823yg7', price: '$12.00', img: 'https://cdn.shopify.com/s/files/1/0627/6585/9031/products/Screenshot2022-03-03at5.55.28PM_1200x.png?v=1646301344' },
+            { name: 'Maggie 8y42huh8', price: '$12.00', img: 'https://cdn.shopify.com/s/files/1/0627/6585/9031/products/Screenshot2022-03-03at5.55.28PM_1200x.png?v=1646301344' },
+            { name: 'Maggie llk9u9', price: '$12.00', img: 'https://m.media-amazon.com/images/I/81dpDHc95AL._SL1500_.jpg' },
+            { name: 'Maggie uuyayv', price: '$12.00', img: 'https://m.media-amazon.com/images/I/81dpDHc95AL._SL1500_.jpg' },
+            { name: 'Maggie diuadi', price: '$12.00', img: 'https://www.bigbasket.com/media/uploads/p/xxl/40237235_3-maggi-2-minute-instant-noodles-veggie-masala-made-with-quality-spices-rich-in-fibre.jpg' },
+            { name: 'Maggie v nbsj', price: '$12.00', img: 'https://www.bigbasket.com/media/uploads/p/xxl/40237235_3-maggi-2-minute-instant-noodles-veggie-masala-made-with-quality-spices-rich-in-fibre.jpg' },
+            { name: 'Maggie hshfyasjk', price: '$12.00', img: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTg9vMAhD5NyN-Hy7q7nqBSDG2ziHDT5ugAJA&s' },
+            { name: 'Maggie ', price: '$12.00', img: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTg9vMAhD5NyN-Hy7q7nqBSDG2ziHDT5ugAJA&s' },
+            { name: 'Maggie nsdjyw98z', price: '$12.00', img: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTzxaLh4CU-oDcXyi7jduM_Vvf65b4NiVmLxw&s' },
+            { name: 'Maggie 4eerwr', price: '$12.00', img: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTzxaLh4CU-oDcXyi7jduM_Vvf65b4NiVmLxw&s' },
+            { name: 'Maggie uuyayv', price: '$12.00', img: 'https://5.imimg.com/data5/VO/HT/PM/SELLER-5215417/maggi-masala-cuppa-noodles-70g-500x500.jpg' },
+            { name: 'Maggie ', price: '$12.00', img: 'https://5.imimg.com/data5/VO/HT/PM/SELLER-5215417/maggi-masala-cuppa-noodles-70g-500x500.jpg' },
+            { name: 'Maggie 823yg7', price: '$12.00', img: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ7sus2IB6T7WmKExjUJPuZ6MUaVLfDSCTvAQ&s' },
+            { name: 'Maggie 8y42huh8', price: '$12.00', img: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ7sus2IB6T7WmKExjUJPuZ6MUaVLfDSCTvAQ&s' },
+            { name: 'Maggie safsdfg4', price: '$12.00', img: 'https://i5.walmartimages.com/seo/Maggi-2-Minute-Masala-Indian-Noodles-9-87-oz_c9f57afc-a6ac-436d-8747-9f26aa0e7bf6.7a9c3c912aa17d7d48f760d3df0843a9.jpeg?odnHeight=768&odnWidth=768&odnBg=FFFFFF' },
+            { name: 'Maggie llk9u9', price: '$12.00', img: 'https://i5.walmartimages.com/seo/Maggi-2-Minute-Masala-Indian-Noodles-9-87-oz_c9f57afc-a6ac-436d-8747-9f26aa0e7bf6.7a9c3c912aa17d7d48f760d3df0843a9.jpeg?odnHeight=768&odnWidth=768&odnBg=FFFFFF' },
+            { name: 'Maggie diuadi', price: '$12.00', img: 'https://s3.ap-south-1.amazonaws.com/diingdong/1611308669_31W-0vUvpnL.jpg' },
+            { name: 'Maggie hshfyasjk', price: '$12.00', img: 'https://s3.ap-south-1.amazonaws.com/diingdong/1611308669_31W-0vUvpnL.jpg' },
+            { name: 'Maggie v nbsj', price: '$12.00', img: 'https://www.maggi.in/sites/default/files/styles/product_image_tab_landscape_384_768/public/maggi-masala-veg-617x900.png?itok=GkuxfCFm' },
+            { name: 'Maggie ', price: '$12.00', img: 'https://www.maggi.in/sites/default/files/styles/product_image_tab_landscape_384_768/public/maggi-masala-veg-617x900.png?itok=GkuxfCFm' },
+            { name: 'Maggie uuyayv', price: '$12.00', img: 'https://www.bigbasket.com/media/uploads/p/xxl/40136266_7-maggi-special-masala-noodles.jpg' },
+            { name: 'Maggie ', price: '$12.00', img: 'https://www.bigbasket.com/media/uploads/p/xxl/40136266_7-maggi-special-masala-noodles.jpg' },
+            { name: 'Maggie 823yg7', price: '$12.00', img: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTzxaLh4CU-oDcXyi7jduM_Vvf65b4NiVmLxw&s' },
+            { name: 'Maggie hshfyasjk', price: '$12.00', img: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTzxaLh4CU-oDcXyi7jduM_Vvf65b4NiVmLxw&s' },
+            { name: 'Maggie nsdjyw98z', price: '$12.00', img: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTg9vMAhD5NyN-Hy7q7nqBSDG2ziHDT5ugAJA&s' },
+            { name: 'Maggie safsdfg4', price: '$12.00', img: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTg9vMAhD5NyN-Hy7q7nqBSDG2ziHDT5ugAJA&s' },
+            { name: 'Maggie diuadi', price: '$12.00', img: 'https://m.media-amazon.com/images/I/81dpDHc95AL._SL1500_.jpg' },
+            { name: 'Maggie ', price: '$12.00', img: 'https://m.media-amazon.com/images/I/81dpDHc95AL._SL1500_.jpg' },
+            { name: 'Maggie 8y42huh8', price: '$12.00', img: 'https://www.bigbasket.com/media/uploads/p/xxl/40237235_3-maggi-2-minute-instant-noodles-veggie-masala-made-with-quality-spices-rich-in-fibre.jpg' },
+            { name: 'Maggie uuyayv', price: '$12.00', img: 'https://www.bigbasket.com/media/uploads/p/xxl/40237235_3-maggi-2-minute-instant-noodles-veggie-masala-made-with-quality-spices-rich-in-fibre.jpg' },
+            { name: 'Maggie llk9u9', price: '$12.00', img: 'https://www.maggi.in/sites/default/files/styles/product_image_tab_landscape_384_768/public/maggi-masala-veg-617x900.png?itok=GkuxfCFm' },
+            { name: 'Maggie 4eerwr', price: '$12.00', img: 'https://www.maggi.in/sites/default/files/styles/product_image_tab_landscape_384_768/public/maggi-masala-veg-617x900.png?itok=GkuxfCFm' },
+            { name: 'Maggie hshfyasjk', price: '$12.00', img: 'https://5.imimg.com/data5/VO/HT/PM/SELLER-5215417/maggi-masala-cuppa-noodles-70g-500x500.jpg' },
+            { name: 'Maggie nsdjyw98z', price: '$12.00', img: 'https://5.imimg.com/data5/VO/HT/PM/SELLER-5215417/maggi-masala-cuppa-noodles-70g-500x500.jpg' },
+            { name: 'Maggie v nbsj', price: '$12.00', img: 'https://i5.walmartimages.com/seo/Maggi-2-Minute-Masala-Indian-Noodles-9-87-oz_c9f57afc-a6ac-436d-8747-9f26aa0e7bf6.7a9c3c912aa17d7d48f760d3df0843a9.jpeg?odnHeight=768&odnWidth=768&odnBg=FFFFFF' },
+            { name: 'Maggie ', price: '$12.00', img: 'https://i5.walmartimages.com/seo/Maggi-2-Minute-Masala-Indian-Noodles-9-87-oz_c9f57afc-a6ac-436d-8747-9f26aa0e7bf6.7a9c3c912aa17d7d48f760d3df0843a9.jpeg?odnHeight=768&odnWidth=768&odnBg=FFFFFF' },
+            { name: 'Maggie 823yg7', price: '$12.00', img: 'https://m.media-amazon.com/images/I/71Hiy0dmhlL.jpg' },
+            { name: 'Maggie 8y42huh8', price: '$12.00', img: 'https://m.media-amazon.com/images/I/71Hiy0dmhlL.jpg' },
+            { name: 'Maggie uuyayv', price: '$12.00', img: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTzxaLh4CU-oDcXyi7jduM_Vvf65b4NiVmLxw&s' },
+            { name: 'Maggie diuadi', price: '$12.00', img: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTzxaLh4CU-oDcXyi7jduM_Vvf65b4NiVmLxw&s' },
+            { name: 'Maggie hshfyasjk', price: '$12.00', img: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTg9vMAhD5NyN-Hy7q7nqBSDG2ziHDT5ugAJA&s' },
+            { name: 'Maggie safsdfg4', price: '$12.00', img: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTg9vMAhD5NyN-Hy7q7nqBSDG2ziHDT5ugAJA&s' },
+            { name: 'Maggie ', price: '$12.00', img: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ7sus2IB6T7WmKExjUJPuZ6MUaVLfDSCTvAQ&s' },
+            { name: 'Maggie 8y42huh8', price: '$12.00', img: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ7sus2IB6T7WmKExjUJPuZ6MUaVLfDSCTvAQ&s' },
+            { name: 'Maggie llk9u9', price: '$12.00', img: 'https://www.bigbasket.com/media/uploads/p/xxl/119705_12-maggi-hot-sweet-tomato-chilli-sauce.jpg' },
+            { name: 'Maggie uuyayv', price: '$12.00', img: 'https://www.bigbasket.com/media/uploads/p/xxl/119705_12-maggi-hot-sweet-tomato-chilli-sauce.jpg' },
+            { name: 'Maggie diuadi', price: '$12.00', img: 'https://m.media-amazon.com/images/I/71hAp8MqgSL.jpg' },
+            { name: 'Maggie ', price: '$12.00', img: 'https://m.media-amazon.com/images/I/71hAp8MqgSL.jpg' },
+            { name: 'Maggie nsdjyw98z', price: '$12.00', img: 'https://s3.ap-south-1.amazonaws.com/diingdong/1611308669_31W-0vUvpnL.jpg' },
+            { name: 'Maggie v nbsj', price: '$12.00', img: 'https://s3.ap-south-1.amazonaws.com/diingdong/1611308669_31W-0vUvpnL.jpg' },
+            { name: 'Maggie ', price: '$12.00', img: 'https://m.media-amazon.com/images/I/8116o8ISrfL._AC_UF894,1000_QL80_.jpg' },
+            { name: 'Maggie uuyayv', price: '$12.00', img: 'https://m.media-amazon.com/images/I/8116o8ISrfL._AC_UF894,1000_QL80_.jpg' },
+            { name: 'Maggie diuadi', price: '$12.00', img: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSFEjduiViaO1-iO37pKOCQuhLieeyIgpQkWm_w3Ye8epsAays5XjR0-qzucYvJzxUrcX8&usqp=CAU' },
+            { name: 'Maggie ', price: '$12.00', img: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSFEjduiViaO1-iO37pKOCQuhLieeyIgpQkWm_w3Ye8epsAays5XjR0-qzucYvJzxUrcX8&usqp=CAU' },
+            { name: 'Maggie hshfyasjk', price: '$12.00', img: 'https://www.maggi.in/sites/default/files/styles/product_image_tab_landscape_384_768/public/maggi-masala-veg-617x900.png?itok=GkuxfCFm' },
+            { name: 'Maggie 4eerwr', price: '$12.00', img: 'https://www.maggi.in/sites/default/files/styles/product_image_tab_landscape_384_768/public/maggi-masala-veg-617x900.png?itok=GkuxfCFm' },
+            { name: 'Maggie llk9u9', price: '$12.00', img: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTzxaLh4CU-oDcXyi7jduM_Vvf65b4NiVmLxw&s' },
+            { name: 'Maggie 8y42huh8', price: '$12.00', img: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTzxaLh4CU-oDcXyi7jduM_Vvf65b4NiVmLxw&s' },
+            { name: 'Maggie safsdfg4', price: '$12.00', img: 'https://5.imimg.com/data5/VO/HT/PM/SELLER-5215417/maggi-masala-cuppa-noodles-70g-500x500.jpg' },
+            { name: 'Maggie uuyayv', price: '$12.00', img: 'https://5.imimg.com/data5/VO/HT/PM/SELLER-5215417/maggi-masala-cuppa-noodles-70g-500x500.jpg' },
+            { name: 'Maggie diuadi', price: '$12.00', img: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ7sus2IB6T7WmKExjUJPuZ6MUaVLfDSCTvAQ&s' },
+            { name: 'Maggie ', price: '$12.00', img: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ7sus2IB6T7WmKExjUJPuZ6MUaVLfDSCTvAQ&s' },
+            { name: 'Maggie nsdjyw98z', price: '$12.00', img: 'https://cdn.shopify.com/s/files/1/0627/6585/9031/products/Screenshot2022-03-03at5.55.28PM_1200x.png?v=1646301344' },
+            { name: 'Maggie ', price: '$12.00', img: 'https://cdn.shopify.com/s/files/1/0627/6585/9031/products/Screenshot2022-03-03at5.55.28PM_1200x.png?v=1646301344' },
+            { name: 'Maggie ', price: '$12.00', img: 'https://www.bigbasket.com/media/uploads/p/xxl/40237235_3-maggi-2-minute-instant-noodles-veggie-masala-made-with-quality-spices-rich-in-fibre.jpg' },
+            { name: 'Maggie hshfyasjk', price: '$12.00', img: 'https://www.bigbasket.com/media/uploads/p/xxl/40237235_3-maggi-2-minute-instant-noodles-veggie-masala-made-with-quality-spices-rich-in-fibre.jpg' },
+            { name: 'Maggie v nbsj', price: '$12.00', img: 'https://s3.ap-south-1.amazonaws.com/diingdong/1611308669_31W-0vUvpnL.jpg' },
+            { name: 'Maggie 8y42huh8', price: '$12.00', img: 'https://s3.ap-south-1.amazonaws.com/diingdong/1611308669_31W-0vUvpnL.jpg' },
+            { name: 'Maggie uuyayv', price: '$12.00', img: 'https://www.maggi.in/sites/default/files/styles/product_image_tab_landscape_384_768/public/maggi-masala-veg-617x900.png?itok=GkuxfCFm' },
+            { name: 'Maggie llk9u9', price: '$12.00', img: 'https://www.maggi.in/sites/default/files/styles/product_image_tab_landscape_384_768/public/maggi-masala-veg-617x900.png?itok=GkuxfCFm' },
+            { name: 'Maggie hshfyasjk', price: '$12.00', img: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTg9vMAhD5NyN-Hy7q7nqBSDG2ziHDT5ugAJA&s' },
+            { name: 'Maggie mnvjnbjcx', price: '$12.00', img: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTg9vMAhD5NyN-Hy7q7nqBSDG2ziHDT5ugAJA&s' },
+            { name: 'Maggie safsdfg4', price: '$12.00', img: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTzxaLh4CU-oDcXyi7jduM_Vvf65b4NiVmLxw&s' },
+            { name: 'Maggie ', price: '$12.00', img: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTzxaLh4CU-oDcXyi7jduM_Vvf65b4NiVmLxw&s' },
+            { name: 'Maggie 823yg7', price: '$12.00', img: 'https://i5.walmartimages.com/seo/Maggi-2-Minute-Masala-Indian-Noodles-9-87-oz_c9f57afc-a6ac-436d-8747-9f26aa0e7bf6.7a9c3c912aa17d7d48f760d3df0843a9.jpeg?odnHeight=768&odnWidth=768&odnBg=FFFFFF' },
+            { name: 'Maggie nsdjyw98z', price: '$12.00', img: 'https://i5.walmartimages.com/seo/Maggi-2-Minute-Masala-Indian-Noodles-9-87-oz_c9f57afc-a6ac-436d-8747-9f26aa0e7bf6.7a9c3c912aa17d7d48f760d3df0843a9.jpeg?odnHeight=768&odnWidth=768&odnBg=FFFFFF' },
+            { name: 'Maggie 4eerwr', price: '$12.00', img: 'https://s3.ap-south-1.amazonaws.com/diingdong/1611308669_31W-0vUvpnL.jpg' },
+            { name: 'Maggie ', price: '$12.00', img: 'https://s3.ap-south-1.amazonaws.com/diingdong/1611308669_31W-0vUvpnL.jpg' },
+            { name: 'Maggie uuyayv', price: '$12.00', img: 'https://m.media-amazon.com/images/I/8116o8ISrfL._AC_UF894,1000_QL80_.jpg' },
+            { name: 'Maggie mnvjnbjcx', price: '$12.00', img: 'https://m.media-amazon.com/images/I/8116o8ISrfL._AC_UF894,1000_QL80_.jpg' },
+            { name: 'Maggie ', price: '$12.00', img: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSFEjduiViaO1-iO37pKOCQuhLieeyIgpQkWm_w3Ye8epsAays5XjR0-qzucYvJzxUrcX8&usqp=CAU' },
+            { name: 'Maggie 8y42huh8', price: '$12.00', img: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSFEjduiViaO1-iO37pKOCQuhLieeyIgpQkWm_w3Ye8epsAays5XjR0-qzucYvJzxUrcX8&usqp=CAU' },
+            { name: 'Maggie v nbsj', price: '$12.00', img: 'https://5.imimg.com/data5/VO/HT/PM/SELLER-5215417/maggi-masala-cuppa-noodles-70g-500x500.jpg' },
+            { name: 'Maggie hshfyasjk', price: '$12.00', img: 'https://5.imimg.com/data5/VO/HT/PM/SELLER-5215417/maggi-masala-cuppa-noodles-70g-500x500.jpg' },
+            { name: 'Maggie llk9u9', price: '$12.00', img: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ7sus2IB6T7WmKExjUJPuZ6MUaVLfDSCTvAQ&s' },
+            { name: 'Maggie uuyayv', price: '$12.00', img: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ7sus2IB6T7WmKExjUJPuZ6MUaVLfDSCTvAQ&s' },
+            { name: 'Maggie mnvjnbjcx', price: '$12.00', img: 'https://m.media-amazon.com/images/I/81dpDHc95AL._SL1500_.jpg' },
+            { name: 'Maggie ', price: '$12.00', img: 'https://m.media-amazon.com/images/I/81dpDHc95AL._SL1500_.jpg' },
+            { name: 'Maggie nsdjyw98z', price: '$12.00', img: 'https://m.media-amazon.com/images/I/8116o8ISrfL._AC_UF894,1000_QL80_.jpg' },
+            { name: 'Maggie ', price: '$12.00', img: 'https://m.media-amazon.com/images/I/8116o8ISrfL._AC_UF894,1000_QL80_.jpg' },
+            { name: 'Maggie safsdfg4', price: '$12.00', img: 'https://m.media-amazon.com/images/I/71hAp8MqgSL.jpg' },
+            { name: 'Maggie 8y42huh8', price: '$12.00', img: 'https://m.media-amazon.com/images/I/71hAp8MqgSL.jpg' },
+            { name: 'Maggie hshfyasjk', price: '$12.00', img: 'https://www.maggi.in/sites/default/files/styles/product_image_tab_landscape_384_768/public/maggi-masala-veg-617x900.png?itok=GkuxfCFm' },
+            { name: 'Maggie ', price: '$12.00', img: 'https://www.maggi.in/sites/default/files/styles/product_image_tab_landscape_384_768/public/maggi-masala-veg-617x900.png?itok=GkuxfCFm' },
+            { name: 'Maggie v nbsj', price: '$12.00', img: 'https://s3.ap-south-1.amazonaws.com/diingdong/1611308669_31W-0vUvpnL.jpg' },
+            { name: 'Maggie uuyayv', price: '$12.00', img: 'https://s3.ap-south-1.amazonaws.com/diingdong/1611308669_31W-0vUvpnL.jpg' },
+            { name: 'Maggie llk9u9', price: '$12.00', img: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTg9vMAhD5NyN-Hy7q7nqBSDG2ziHDT5ugAJA&s' },
+            { name: 'Maggie 4eerwr', price: '$12.00', img: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTg9vMAhD5NyN-Hy7q7nqBSDG2ziHDT5ugAJA&s' },
+            { name: 'Maggie ', price: '$12.00', img: 'https://www.bigbasket.com/media/uploads/p/xxl/119705_12-maggi-hot-sweet-tomato-chilli-sauce.jpg' },
+            { name: 'Maggie mnvjnbjcx', price: '$12.00', img: 'https://www.bigbasket.com/media/uploads/p/xxl/119705_12-maggi-hot-sweet-tomato-chilli-sauce.jpg' },
+            { name: 'Maggie ', price: '$12.00', img: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSFEjduiViaO1-iO37pKOCQuhLieeyIgpQkWm_w3Ye8epsAays5XjR0-qzucYvJzxUrcX8&usqp=CAU' },
+            { name: 'Maggiehshf yasjk', price: '$12.00', img: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSFEjduiViaO1-iO37pKOCQuhLieeyIgpQkWm_w3Ye8epsAays5XjR0-qzucYvJzxUrcX8&usqp=CAU' },
+            { name: 'Maggie 8y42huh8', price: '$12.00', img: 'https://m.media-amazon.com/images/I/71hAp8MqgSL.jpg' },
+            { name: 'Maggie nsdjyw98z', price: '$12.00', img: 'https://m.media-amazon.com/images/I/71hAp8MqgSL.jpg' },
+            { name: 'Maggie safsdfg4', price: '$12.00', img: 'https://m.media-amazon.com/images/I/8116o8ISrfL._AC_UF894,1000_QL80_.jpg' },
+            { name: 'Maggie llk9u9', price: '$12.00', img: 'https://m.media-amazon.com/images/I/8116o8ISrfL._AC_UF894,1000_QL80_.jpg' },
+            { name: 'Maggie uuyayv', price: '$12.00', img: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTzxaLh4CU-oDcXyi7jduM_Vvf65b4NiVmLxw&s' },
+            { name: 'Maggie ', price: '$12.00', img: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTzxaLh4CU-oDcXyi7jduM_Vvf65b4NiVmLxw&s' },
+            { name: 'Maggie v nbsj', price: '$12.00', img: 'https://www.maggi.in/sites/default/files/styles/product_image_tab_landscape_384_768/public/maggi-masala-veg-617x900.png?itok=GkuxfCFm' },
+            { name: 'Maggie uuyayv', price: '$12.00', img: 'https://www.maggi.in/sites/default/files/styles/product_image_tab_landscape_384_768/public/maggi-masala-veg-617x900.png?itok=GkuxfCFm' },
+            { name: 'Maggie ', price: '$12.00', img: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTg9vMAhD5NyN-Hy7q7nqBSDG2ziHDT5ugAJA&s' },
+            { name: 'Maggie mnvjnbjcx', price: '$12.00', img: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTg9vMAhD5NyN-Hy7q7nqBSDG2ziHDT5ugAJA&s' },
+            { name: 'Maggie 823yg7', price: '$12.00', img: 'https://5.imimg.com/data5/VO/HT/PM/SELLER-5215417/maggi-masala-cuppa-noodles-70g-500x500.jpg' },
+            { name: 'Maggie ', price: '$12.00', img: 'https://5.imimg.com/data5/VO/HT/PM/SELLER-5215417/maggi-masala-cuppa-noodles-70g-500x500.jpg' },
+            { name: 'Maggie 8y42huh8', price: '$12.00', img: 'https://i5.walmartimages.com/seo/Maggi-2-Minute-Masala-Indian-Noodles-9-87-oz_c9f57afc-a6ac-436d-8747-9f26aa0e7bf6.7a9c3c912aa17d7d48f760d3df0843a9.jpeg?odnHeight=768&odnWidth=768&odnBg=FFFFFF' },
+            { name: 'Maggie llk9u9', price: '$12.00', img: 'https://i5.walmartimages.com/seo/Maggi-2-Minute-Masala-Indian-Noodles-9-87-oz_c9f57afc-a6ac-436d-8747-9f26aa0e7bf6.7a9c3c912aa17d7d48f760d3df0843a9.jpeg?odnHeight=768&odnWidth=768&odnBg=FFFFFF' },
+            { name: 'Maggie nsdjyw98z', price: '$12.00', img: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSFEjduiViaO1-iO37pKOCQuhLieeyIgpQkWm_w3Ye8epsAays5XjR0-qzucYvJzxUrcX8&usqp=CAU' },
+            { name: 'Maggie safsdfg4', price: '$12.00', img: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSFEjduiViaO1-iO37pKOCQuhLieeyIgpQkWm_w3Ye8epsAays5XjR0-qzucYvJzxUrcX8&usqp=CAU' },
+            { name: 'Maggie v nbsj', price: '$12.00', img: 'https://s3.ap-south-1.amazonaws.com/diingdong/1611308669_31W-0vUvpnL.jpg' },
+            { name: 'Maggie 4eerwr', price: '$12.00', img: 'https://s3.ap-south-1.amazonaws.com/diingdong/1611308669_31W-0vUvpnL.jpg' },
+            { name: 'Maggie uuyayv', price: '$12.00', img: 'https://cdn.shopify.com/s/files/1/0627/6585/9031/products/Screenshot2022-03-03at5.55.28PM_1200x.png?v=1646301344' },
+            { name: 'Maggie 823yg7', price: '$12.00', img: 'https://cdn.shopify.com/s/files/1/0627/6585/9031/products/Screenshot2022-03-03at5.55.28PM_1200x.png?v=1646301344' },
+            { name: 'Maggie ', price: '$12.00', img: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTzxaLh4CU-oDcXyi7jduM_Vvf65b4NiVmLxw&s' },
+            { name: 'Maggie hshfyasjk', price: '$12.00', img: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTzxaLh4CU-oDcXyi7jduM_Vvf65b4NiVmLxw&s' },
+            { name: 'Maggie mnvjnbjcx', price: '$12.00', img: 'https://www.maggi.in/sites/default/files/styles/product_image_tab_landscape_384_768/public/maggi-masala-veg-617x900.png?itok=GkuxfCFm' },
+            { name: 'Maggie ', price: '$12.00', img: 'https://www.maggi.in/sites/default/files/styles/product_image_tab_landscape_384_768/public/maggi-masala-veg-617x900.png?itok=GkuxfCFm' },
+            { name: 'Maggie 8y42huh8', price: '$12.00', img: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ7sus2IB6T7WmKExjUJPuZ6MUaVLfDSCTvAQ&s' },
+            { name: 'Maggie llk9u9', price: '$12.00', img: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ7sus2IB6T7WmKExjUJPuZ6MUaVLfDSCTvAQ&s' },
+            { name: 'Maggie safsdfg4', price: '$12.00', img: 'https://www.bigbasket.com/media/uploads/p/xxl/40237235_3-maggi-2-minute-instant-noodles-veggie-masala-made-with-quality-spices-rich-in-fibre.jpg' },
+            { name: 'Maggie 4eerwr', price: '$12.00', img: 'https://www.bigbasket.com/media/uploads/p/xxl/40237235_3-maggi-2-minute-instant-noodles-veggie-masala-made-with-quality-spices-rich-in-fibre.jpg' },
+            { name: 'Maggie uuyayv', price: '$12.00', img: 'https://m.media-amazon.com/images/I/71Hiy0dmhlL.jpg' },
+            { name: 'Maggie ', price: '$12.00', img: 'https://m.media-amazon.com/images/I/71Hiy0dmhlL.jpg' },
+            { name: 'Maggie nsdjyw98z', price: '$12.00', img: 'https://m.media-amazon.com/images/I/8116o8ISrfL._AC_UF894,1000_QL80_.jpg' },
+            { name: 'Maggie v nbsj', price: '$12.00', img: 'https://m.media-amazon.com/images/I/8116o8ISrfL._AC_UF894,1000_QL80_.jpg' },
+            { name: 'Maggie 4eerwr', price: '$12.00', img: 'https://m.media-amazon.com/images/I/71hAp8MqgSL.jpg' },
+            { name: 'Maggie mnvjnbjcx', price: '$12.00', img: 'https://m.media-amazon.com/images/I/71hAp8MqgSL.jpg' },
+            { name: 'Maggie ', price: '$12.00', img: 'https://s3.ap-south-1.amazonaws.com/diingdong/1611308669_31W-0vUvpnL.jpg' },
+            { name: 'Maggie dsf43', price: '$12.00', img: 'https://s3.ap-south-1.amazonaws.com/diingdong/1611308669_31W-0vUvpnL.jpg' },
+            { name: 'Maggie 8y42huh8', price: '$12.00', img: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTg9vMAhD5NyN-Hy7q7nqBSDG2ziHDT5ugAJA&s' },
+            { name: 'Maggie llk9u9', price: '$12.00', img: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTg9vMAhD5NyN-Hy7q7nqBSDG2ziHDT5ugAJA&s' },
+            { name: 'Maggie uuyayv', price: '$12.00', img: 'https://5.imimg.com/data5/VO/HT/PM/SELLER-5215417/maggi-masala-cuppa-noodles-70g-500x500.jpg' },
+            { name: 'Maggie mnvjnbjcx', price: '$12.00', img: 'https://5.imimg.com/data5/VO/HT/PM/SELLER-5215417/maggi-masala-cuppa-noodles-70g-500x500.jpg' },
+            { name: 'Maggie ', price: '$12.00', img: 'https://cdn.shopify.com/s/files/1/0627/6585/9031/products/Screenshot2022-03-03at5.55.28PM_1200x.png?v=1646301344' },
+            { name: 'Maggie 8y42huh8', price: '$12.00', img: 'https://cdn.shopify.com/s/files/1/0627/6585/9031/products/Screenshot2022-03-03at5.55.28PM_1200x.png?v=1646301344' },
+            { name: 'Maggie hshfyasjk', price: '$12.00', img: 'https://m.media-amazon.com/images/I/81dpDHc95AL._SL1500_.jpg' },
+            { name: 'Maggie nsdjyw98z', price: '$12.00', img: 'https://m.media-amazon.com/images/I/81dpDHc95AL._SL1500_.jpg' },
+            { name: 'Maggie safsdfg4', price: '$12.00', img: 'https://www.bigbasket.com/media/uploads/p/xxl/40136266_7-maggi-special-masala-noodles.jpg' },
+            { name: 'Maggie dsf43', price: '$12.00', img: 'https://www.bigbasket.com/media/uploads/p/xxl/40136266_7-maggi-special-masala-noodles.jpg' },
+            { name: 'Maggie v nbsj', price: '$12.00', img: 'https://www.maggi.in/sites/default/files/styles/product_image_tab_landscape_384_768/public/maggi-masala-veg-617x900.png?itok=GkuxfCFm' },
+            { name: 'Maggie mnvjnbjcx', price: '$12.00', img: 'https://www.maggi.in/sites/default/files/styles/product_image_tab_landscape_384_768/public/maggi-masala-veg-617x900.png?itok=GkuxfCFm' },
+            { name: 'Maggie 823yg7', price: '$12.00', img: 'https://i5.walmartimages.com/seo/Maggi-2-Minute-Masala-Indian-Noodles-9-87-oz_c9f57afc-a6ac-436d-8747-9f26aa0e7bf6.7a9c3c912aa17d7d48f760d3df0843a9.jpeg?odnHeight=768&odnWidth=768&odnBg=FFFFFF' },
+            { name: 'Maggie 4eerwr', price: '$12.00', img: 'https://i5.walmartimages.com/seo/Maggi-2-Minute-Masala-Indian-Noodles-9-87-oz_c9f57afc-a6ac-436d-8747-9f26aa0e7bf6.7a9c3c912aa17d7d48f760d3df0843a9.jpeg?odnHeight=768&odnWidth=768&odnBg=FFFFFF' },
+            { name: 'Maggie llk9u9', price: '$12.00', img: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTzxaLh4CU-oDcXyi7jduM_Vvf65b4NiVmLxw&s' },
+            { name: 'Maggie uuyayv', price: '$12.00', img: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTzxaLh4CU-oDcXyi7jduM_Vvf65b4NiVmLxw&s' },
+            { name: 'Maggie 8y42huh8 ', price: '$12.00', img: 'https://s3.ap-south-1.amazonaws.com/diingdong/1611308669_31W-0vUvpnL.jpg' },
+            { name: 'Maggie asfse23', price: '$12.00', img: 'https://s3.ap-south-1.amazonaws.com/diingdong/1611308669_31W-0vUvpnL.jpg' },
+            { name: 'Maggie 8y42huh8', price: '$12.00', img: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTg9vMAhD5NyN-Hy7q7nqBSDG2ziHDT5ugAJA&s' },
+            { name: 'Maggie dsf43', price: '$12.00', img: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTg9vMAhD5NyN-Hy7q7nqBSDG2ziHDT5ugAJA&s' },
+            { name: 'Maggie v nbsj', price: '$12.00', img: 'https://www.bigbasket.com/media/uploads/p/xxl/119705_12-maggi-hot-sweet-tomato-chilli-sauce.jpg' },
+            { name: 'Maggie safsdfg4', price: '$12.00', img: 'https://www.bigbasket.com/media/uploads/p/xxl/119705_12-maggi-hot-sweet-tomato-chilli-sauce.jpg' },
+            { name: 'Maggie 4eerwr', price: '$12.00', img: 'https://m.media-amazon.com/images/I/8116o8ISrfL._AC_UF894,1000_QL80_.jpg' },
+            { name: 'Maggie uuyayv', price: '$12.00', img: 'https://m.media-amazon.com/images/I/8116o8ISrfL._AC_UF894,1000_QL80_.jpg' },
+            { name: 'Maggie mnvjnbjcx', price: '$12.00', img: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSFEjduiViaO1-iO37pKOCQuhLieeyIgpQkWm_w3Ye8epsAays5XjR0-qzucYvJzxUrcX8&usqp=CAU' },
+            { name: 'Maggie asfse23', price: '$12.00', img: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSFEjduiViaO1-iO37pKOCQuhLieeyIgpQkWm_w3Ye8epsAays5XjR0-qzucYvJzxUrcX8&usqp=CAU' },
+            { name: 'Maggie 823yg7', price: '$12.00', img: 'https://m.media-amazon.com/images/I/71hAp8MqgSL.jpg' },
+            { name: 'Maggie mnvjnbjcx', price: '$12.00', img: 'https://m.media-amazon.com/images/I/71hAp8MqgSL.jpg' },
+            { name: 'Maggie 8y42huh8', price: '$12.00', img: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSFEjduiViaO1-iO37pKOCQuhLieeyIgpQkWm_w3Ye8epsAays5XjR0-qzucYvJzxUrcX8&usqp=CAU' },
+            { name: 'Maggie nsdjyw98z', price: '$12.00', img: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSFEjduiViaO1-iO37pKOCQuhLieeyIgpQkWm_w3Ye8epsAays5XjR0-qzucYvJzxUrcX8&usqp=CAU' },
+            { name: 'Maggie dsf43', price: '$12.00', img: 'https://5.imimg.com/data5/VO/HT/PM/SELLER-5215417/maggi-masala-cuppa-noodles-70g-500x500.jpg' },
+            { name: 'Maggie llk9u9', price: '$12.00', img: 'https://5.imimg.com/data5/VO/HT/PM/SELLER-5215417/maggi-masala-cuppa-noodles-70g-500x500.jpg' },
+            { name: 'Maggie hshfyasjk', price: '$12.00', img: 'https://m.media-amazon.com/images/I/71Hhttps://m.media-amazon.com/images/I/71Hiy0dmhlL.jpg' },
+            { name: 'Maggie v nbsj', price: '$12.00', img: 'https://m.media-amazon.com/images/I/71Hhttps://m.media-amazon.com/images/I/71Hiy0dmhlL.jpg' },
+            { name: 'Maggie uuyayv', price: '$12.00', img: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSFEjduiViaO1-iO37pKOCQuhLieeyIgpQkWm_w3Ye8epsAays5XjR0-qzucYvJzxUrcX8&usqp=CAU' },
+            { name: 'Maggie mnvjnbjcx', price: '$12.00', img: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSFEjduiViaO1-iO37pKOCQuhLieeyIgpQkWm_w3Ye8epsAays5XjR0-qzucYvJzxUrcX8&usqp=CAU' },
+            { name: 'Maggie safsdfg4', price: '$12.00', img: 'https://www.bigbasket.com/media/uploads/p/xxl/40237235_3-maggi-2-minute-instant-noodles-veggie-masala-made-with-quality-spices-rich-in-fibre.jpg' },
+            { name: 'Maggie 4eerwr', price: '$12.00', img: 'https://www.bigbasket.com/media/uploads/p/xxl/40237235_3-maggi-2-minute-instant-noodles-veggie-masala-made-with-quality-spices-rich-in-fibre.jpg' },
+            { name: 'Maggie 8y42huh8', price: '$12.00', img: 'https://m.media-amazon.com/images/I/71Hhttps://m.media-amazon.com/images/I/71Hiy0dmhlL.jpg' },
+            { name: 'Maggie asfse23', price: '$12.00', img: 'https://m.media-amazon.com/images/I/71Hhttps://m.media-amazon.com/images/I/71Hiy0dmhlL.jpg' },
+            { name: 'Maggie uuyayv', price: '$12.00', img: 'https://www.maggi.in/sites/default/files/styles/product_image_tab_landscape_384_768/public/maggi-masala-veg-617x900.png?itok=GkuxfCFm' },
+            { name: 'Maggie llk9u9', price: '$12.00', img: 'https://www.maggi.in/sites/default/files/styles/product_image_tab_landscape_384_768/public/maggi-masala-veg-617x900.png?itok=GkuxfCFm' },
+            { name: 'Maggie dsf43', price: '$12.00', img: 'https://s3.ap-south-1.amazonaws.com/diingdong/1611308669_31W-0vUvpnL.jpg' },
+            { name: 'Maggie nsdjyw98z', price: '$12.00', img: 'https://s3.ap-south-1.amazonaws.com/diingdong/1611308669_31W-0vUvpnL.jpg' },
+            { name: 'Maggie v nbsj', price: '$12.00', img: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTzxaLh4CU-oDcXyi7jduM_Vvf65b4NiVmLxw&s' },
+            { name: 'Maggie hshfyasjk', price: '$12.00', img: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTzxaLh4CU-oDcXyi7jduM_Vvf65b4NiVmLxw&s' },
+            { name: 'Maggie 4eerwr', price: '$12.00', img: 'https://m.media-amazon.com/images/I/8116o8ISrfL._AC_UF894,1000_QL80_.jpg' },
+            { name: 'Maggie mnvjnbjcx', price: '$12.00', img: 'https://m.media-amazon.com/images/I/8116o8ISrfL._AC_UF894,1000_QL80_.jpg' },
+            { name: 'Maggie asfse23', price: '$12.00', img: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTg9vMAhD5NyN-Hy7q7nqBSDG2ziHDT5ugAJA&s' },
+            { name: 'Maggie uuyayv', price: '$12.00', img: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTg9vMAhD5NyN-Hy7q7nqBSDG2ziHDT5ugAJA&s' },
+            { name: 'Maggie dsf43', price: '$12.00', img: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ7sus2IB6T7WmKExjUJPuZ6MUaVLfDSCTvAQ&s' },
+            { name: 'Maggie llk9u9', price: '$12.00', img: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ7sus2IB6T7WmKExjUJPuZ6MUaVLfDSCTvAQ&s' },
+            { name: 'Maggie 8y42huh8', price: '$12.00', img: 'https://cdn.shopify.com/s/files/1/0627/6585/9031/products/Screenshot2022-03-03at5.55.28PM_1200x.png?v=1646301344' },
+            { name: 'Maggie 4eerwr', price: '$12.00', img: 'https://cdn.shopify.com/s/files/1/0627/6585/9031/products/Screenshot2022-03-03at5.55.28PM_1200x.png?v=1646301344' },
+            { name: 'Maggie nsdjyw98z', price: '$12.00', img: 'https://m.media-amazon.com/images/I/81dpDHc95AL._SL1500_.jpg' },
+            { name: 'Maggie safsdfg4', price: '$12.00', img: 'https://m.media-amazon.com/images/I/81dpDHc95AL._SL1500_.jpg' },
+            { name: 'Maggie asfse23', price: '$12.00', img: 'https://www.maggi.in/sites/default/files/styles/product_image_tab_landscape_384_768/public/maggi-masala-veg-617x900.png?itok=GkuxfCFm' },
+            { name: 'Maggie llk9u9', price: '$12.00', img: 'https://www.maggi.in/sites/default/files/styles/product_image_tab_landscape_384_768/public/maggi-masala-veg-617x900.png?itok=GkuxfCFm' },
+            { name: 'Maggie uuyayv', price: '$12.00', img: 'https://m.media-amazon.com/images/I/71hAp8MqgSL.jpg' },
+            { name: 'Maggie v nbsj', price: '$12.00', img: 'https://m.media-amazon.com/images/I/71hAp8MqgSL.jpg' },
+            { name: 'Maggie mnvjnbjcx', price: '$12.00', img: 'https://m.media-amazon.com/images/I/71Hhttps://m.media-amazon.com/images/I/71Hiy0dmhlL.jpg' },
+            { name: 'Maggie 8y42huh8', price: '$12.00', img: 'https://m.media-amazon.com/images/I/71Hhttps://m.media-amazon.com/images/I/71Hiy0dmhlL.jpg' },
+            { name: 'Maggie hshfyasjk', price: '$12.00', img: 'https://s3.ap-south-1.amazonaws.com/diingdong/1611308669_31W-0vUvpnL.jpg' },
+            { name: 'Maggie dsf43', price: '$12.00', img: 'https://s3.ap-south-1.amazonaws.com/diingdong/1611308669_31W-0vUvpnL.jpg' },
+            { name: 'Maggie llk9u9', price: '$12.00', img: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTg9vMAhD5NyN-Hy7q7nqBSDG2ziHDT5ugAJA&s' },
+            { name: 'Maggie nsdjyw98z', price: '$12.00', img: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTg9vMAhD5NyN-Hy7q7nqBSDG2ziHDT5ugAJA&s' },
+            { name: 'Maggie asfse23', price: '$12.00', img: 'https://5.imimg.com/data5/VO/HT/PM/SELLER-5215417/maggi-masala-cuppa-noodles-70g-500x500.jpg' },
+            { name: 'Maggie 4eerwr', price: '$12.00', img: 'https://5.imimg.com/data5/VO/HT/PM/SELLER-5215417/maggi-masala-cuppa-noodles-70g-500x500.jpg' },
+            { name: 'Maggie uuyayv', price: '$12.00', img: 'https://www.bigbasket.com/media/uploads/p/xxl/40136266_7-maggi-special-masala-noodles.jpg' },
+            { name: 'Maggie llk9u9', price: '$12.00', img: 'https://www.bigbasket.com/media/uploads/p/xxl/40136266_7-maggi-special-masala-noodles.jpg' },
+            { name: 'Maggie 8y42huh8', price: '$12.00', img: 'https://i5.walmartimages.com/seo/Maggi-2-Minute-Masala-Indian-Noodles-9-87-oz_c9f57afc-a6ac-436d-8747-9f26aa0e7bf6.7a9c3c912aa17d7d48f760d3df0843a9.jpeg?odnHeight=768&odnWidth=768&odnBg=FFFFFF' },
+            { name: 'Maggie v nbsj', price: '$12.00', img: 'https://i5.walmartimages.com/seo/Maggi-2-Minute-Masala-Indian-Noodles-9-87-oz_c9f57afc-a6ac-436d-8747-9f26aa0e7bf6.7a9c3c912aa17d7d48f760d3df0843a9.jpeg?odnHeight=768&odnWidth=768&odnBg=FFFFFF' },
+            { name: 'Maggie mnvjnbjcx', price: '$12.00', img: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTzxaLh4CU-oDcXyi7jduM_Vvf65b4NiVmLxw&s' },
+            { name: 'Maggie llk9u9', price: '$12.00', img: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTzxaLh4CU-oDcXyi7jduM_Vvf65b4NiVmLxw&s' },
+            { name: 'Maggie dsf43', price: '$12.00', img: 'https://cdn.shopify.com/s/files/1/0627/6585/9031/products/Screenshot2022-03-03at5.55.28PM_1200x.png?v=1646301344' },
+            { name: 'Maggie hshfyasjk', price: '$12.00', img: 'https://cdn.shopify.com/s/files/1/0627/6585/9031/products/Screenshot2022-03-03at5.55.28PM_1200x.png?v=1646301344' },
+            { name: 'Maggie 4eerwr', price: '$12.00', img: 'https://m.media-amazon.com/images/I/71Hiy0dmhlL.jpg' },
+            { name: 'Maggie asfse23', price: '$12.00', img: 'https://m.media-amazon.com/images/I/71Hiy0dmhlL.jpg' },
+            { name: 'Maggie llk9u9', price: '$12.00', img: 'https://www.maggi.in/sites/default/files/styles/product_image_tab_landscape_384_768/public/maggi-masala-veg-617x900.png?itok=GkuxfCFm' },
+            { name: 'Maggie llk9u9', price: '$12.00', img: 'https://www.maggi.in/sites/default/files/styles/product_image_tab_landscape_384_768/public/maggi-masala-veg-617x900.png?itok=GkuxfCFm' },
+            { name: 'Maggie v nbsj', price: '$12.00', img: 'https://www.bigbasket.com/media/uploads/p/xxl/119705_12-maggi-hot-sweet-tomato-chilli-sauce.jpg' },
+            { name: 'Maggie 8y42huh8', price: '$12.00', img: 'https://www.bigbasket.com/media/uploads/p/xxl/119705_12-maggi-hot-sweet-tomato-chilli-sauce.jpg' },
+            { name: 'Maggie 4eerwr', price: '$12.00', img: 'https://m.media-amazon.com/images/I/81dpDHc95AL._SL1500_.jpg' },
+            { name: 'Maggie uuyayv', price: '$12.00', img: 'https://m.media-amazon.com/images/I/81dpDHc95AL._SL1500_.jpg' },
+            { name: 'Maggie ', price: '$12.00', img: 'https://www.bigbasket.com/media/uploads/p/xxl/40237235_3-maggi-2-minute-instant-noodles-veggie-masala-made-with-quality-spices-rich-in-fibre.jpg' },
+            { name: 'Maggie ', price: '$12.00', img: 'https://www.bigbasket.com/media/uploads/p/xxl/40237235_3-maggi-2-minute-instant-noodles-veggie-masala-made-with-quality-spices-rich-in-fibre.jpg' },
+            { name: 'Maggie asfse23', price: '$12.00', img: 'https://m.media-amazon.com/images/I/8116o8ISrfL._AC_UF894,1000_QL80_.jpg' },
+            { name: 'Maggie ', price: '$12.00', img: 'https://m.media-amazon.com/images/I/8116o8ISrfL._AC_UF894,1000_QL80_.jpg' },
+            { name: 'Maggie mnvjnbjcx', price: '$12.00', img: 'https://www.maggi.in/sites/default/files/styles/product_image_tab_landscape_384_768/public/maggi-masala-veg-617x900.png?itok=GkuxfCFm' },
+            { name: 'Maggie ', price: '$12.00', img: 'https://www.maggi.in/sites/default/files/styles/product_image_tab_landscape_384_768/public/maggi-masala-veg-617x900.png?itok=GkuxfCFm' },
+            { name: 'Maggie 8y42huh8', price: '$12.00', img: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ7sus2IB6T7WmKExjUJPuZ6MUaVLfDSCTvAQ&s' },
+            { name: 'Maggie nsdjyw98z', price: '$12.00', img: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ7sus2IB6T7WmKExjUJPuZ6MUaVLfDSCTvAQ&s' },
+            { name: 'Maggie dsf43', price: '$12.00', img: 'https://m.media-amazon.com/images/I/71Hiy0dmhlL.jpg' },
+            { name: 'Maggie mnvjnbjcx', price: '$12.00', img: 'https://m.media-amazon.com/images/I/71Hiy0dmhlL.jpg' },
+            { name: 'Maggie v nbsj', price: '$12.00', img: 'https://s3.ap-south-1.amazonaws.com/diingdong/1611308669_31W-0vUvpnL.jpg' },
+            { name: 'Maggie ', price: '$12.00', img: 'https://s3.ap-south-1.amazonaws.com/diingdong/1611308669_31W-0vUvpnL.jpg' },
+            { name: 'Maggie hshfyasjk', price: '$12.00', img: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSFEjduiViaO1-iO37pKOCQuhLieeyIgpQkWm_w3Ye8epsAays5XjR0-qzucYvJzxUrcX8&usqp=CAU' },
+            { name: 'Maggie asfse23', price: '$12.00', img: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSFEjduiViaO1-iO37pKOCQuhLieeyIgpQkWm_w3Ye8epsAays5XjR0-qzucYvJzxUrcX8&usqp=CAU' },
+            { name: 'Maggie uuyayv', price: '$12.00', img: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTzxaLh4CU-oDcXyi7jduM_Vvf65b4NiVmLxw&s' },
+            { name: 'Maggie 8y42huh8', price: '$12.00', img: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTzxaLh4CU-oDcXyi7jduM_Vvf65b4NiVmLxw&s' },
+            { name: 'Maggie ', price: '$12.00', img: 'https://m.media-amazon.com/images/I/71hAp8MqgSL.jpg' },
+            { name: 'Maggie mnvjnbjcx', price: '$12.00', img: 'https://m.media-amazon.com/images/I/71hAp8MqgSL.jpg' },
+            { name: 'Maggie ', price: '$12.00', img: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTg9vMAhD5NyN-Hy7q7nqBSDG2ziHDT5ugAJA&s' },
+            { name: 'Maggie dsf43', price: '$12.00', img: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTg9vMAhD5NyN-Hy7q7nqBSDG2ziHDT5ugAJA&s' },
+            { name: 'Maggie 4eerwr', price: '$12.00', img: 'https://5.imimg.com/data5/VO/HT/PM/SELLER-5215417/maggi-masala-cuppa-noodles-70g-500x500.jpg' },
+            { name: 'Maggie uuyayv', price: '$12.00', img: 'https://5.imimg.com/data5/VO/HT/PM/SELLER-5215417/maggi-masala-cuppa-noodles-70g-500x500.jpg' },
+            { name: 'Maggie ', price: '$12.00', img: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ7sus2IB6T7WmKExjUJPuZ6MUaVLfDSCTvAQ&s' },
+            { name: 'Maggie nsdjyw98z', price: '$12.00', img: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ7sus2IB6T7WmKExjUJPuZ6MUaVLfDSCTvAQ&s' },
+            { name: 'Maggie v nbsj', price: '$12.00', img: 'https://cdn.shopify.com/s/files/1/0627/6585/9031/products/Screenshot2022-03-03at5.55.28PM_1200x.png?v=1646301344' },
+            { name: 'Maggie 8y42huh8', price: '$12.00', img: 'https://cdn.shopify.com/s/files/1/0627/6585/9031/products/Screenshot2022-03-03at5.55.28PM_1200x.png?v=1646301344' },
+            { name: 'Maggie asfse23', price: '$12.00', img: 'https://www.bigbasket.com/media/uploads/p/xxl/40237235_3-maggi-2-minute-instant-noodles-veggie-masala-made-with-quality-spices-rich-in-fibre.jpg' },
+            { name: 'Maggie mnvjnbjcx', price: '$12.00', img: 'https://www.bigbasket.com/media/uploads/p/xxl/40237235_3-maggi-2-minute-instant-noodles-veggie-masala-made-with-quality-spices-rich-in-fibre.jpg' },
+            { name: 'Maggie ', price: '$12.00', img: 'https://www.maggi.in/sites/default/files/styles/product_image_tab_landscape_384_768/public/maggi-masala-veg-617x900.png?itok=GkuxfCFm' },
+            { name: 'Maggie hshfyasjk', price: '$12.00', img: 'https://www.maggi.in/sites/default/files/styles/product_image_tab_landscape_384_768/public/maggi-masala-veg-617x900.png?itok=GkuxfCFm' },
+            { name: 'Maggie uuyayv', price: '$12.00', img: 'https://m.media-amazon.com/images/I/81dpDHc95AL._SL1500_.jpg' },
+            { name: 'Maggie mnvjnbjcx', price: '$12.00', img: 'https://m.media-amazon.com/images/I/81dpDHc95AL._SL1500_.jpg' },
+            { name: 'Maggie 8y42huh8', price: '$12.00', img: 'https://m.media-amazon.com/images/I/71Hiy0dmhlL.jpg' },
+            { name: 'Maggie dsf43', price: '$12.00', img: 'https://m.media-amazon.com/images/I/71Hiy0dmhlL.jpg' },
+            { name: 'Maggie 4eerwr', price: '$12.00', img: 'https://s3.ap-south-1.amazonaws.com/diingdong/1611308669_31W-0vUvpnL.jpg' },
+            { name: 'Maggie asfse23', price: '$12.00', img: 'https://s3.ap-south-1.amazonaws.com/diingdong/1611308669_31W-0vUvpnL.jpg' },
+            { name: 'Maggie nsdjyw98z', price: '$12.00', img: 'https://m.media-amazon.com/images/I/8116o8ISrfL._AC_UF894,1000_QL80_.jpg' },
+            { name: 'Maggie v nbsj', price: '$12.00', img: 'https://m.media-amazon.com/images/I/8116o8ISrfL._AC_UF894,1000_QL80_.jpg' },
+            { name: 'Maggie uuyayv', price: '$12.00', img: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTzxaLh4CU-oDcXyi7jduM_Vvf65b4NiVmLxw&s' },
+            { name: 'Maggie mnvjnbjcx', price: '$12.00', img: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTzxaLh4CU-oDcXyi7jduM_Vvf65b4NiVmLxw&s' },
+            { name: 'Maggie 4eerwr', price: '$12.00', img: 'https://5.imimg.com/data5/VO/HT/PM/SELLER-5215417/maggi-masala-cuppa-noodles-70g-500x500.jpg' },
+            { name: 'Maggie 8y42huh8', price: '$12.00', img: 'https://5.imimg.com/data5/VO/HT/PM/SELLER-5215417/maggi-masala-cuppa-noodles-70g-500x500.jpg' },
+            { name: 'Maggie asfse23', price: '$12.00', img: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ7sus2IB6T7WmKExjUJPuZ6MUaVLfDSCTvAQ&s' },
+            { name: 'Maggie ', price: '$12.00', img: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ7sus2IB6T7WmKExjUJPuZ6MUaVLfDSCTvAQ&s' },
+            { name: 'Maggiev nbsj', price: '$12.00', img: 'https://www.bigbasket.com/media/uploads/p/xxl/40136266_7-maggi-special-masala-noodles.jpg' },
+            { name: 'Maggie hshfyasjk', price: '$12.00', img: 'https://www.bigbasket.com/media/uploads/p/xxl/40136266_7-maggi-special-masala-noodles.jpg' },
+            { name: 'Maggie mnvjnbjcx', price: '$12.00', img: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTg9vMAhD5NyN-Hy7q7nqBSDG2ziHDT5ugAJA&s' },
+            { name: 'Maggie dsf43', price: '$12.00', img: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTg9vMAhD5NyN-Hy7q7nqBSDG2ziHDT5ugAJA&s' },
+            { name: 'Maggie uuyayv', price: '$12.00', img: 'https://www.bigbasket.com/media/uploads/p/xxl/119705_12-maggi-hot-sweet-tomato-chilli-sauce.jpg' },
+            { name: 'Maggie 8y42huh8', price: '$12.00', img: 'https://www.bigbasket.com/media/uploads/p/xxl/119705_12-maggi-hot-sweet-tomato-chilli-sauce.jpg' },
+            { name: 'Maggie ', price: '$12.00', img: 'https://cdn.shopify.com/s/files/1/0627/6585/9031/products/Screenshot2022-03-03at5.55.28PM_1200x.png?v=1646301344' },
+            { name: 'Maggie mnvjnbjcx', price: '$12.00', img: 'https://cdn.shopify.com/s/files/1/0627/6585/9031/products/Screenshot2022-03-03at5.55.28PM_1200x.png?v=1646301344' },
+            { name: 'Maggie 8y42huh8', price: '$12.00', img: 'https://www.bigbasket.com/media/uploads/p/xxl/40237235_3-maggi-2-minute-instant-noodles-veggie-masala-made-with-quality-spices-rich-in-fibre.jpg' },
+            { name: 'Maggie nsdjyw98z', price: '$12.00', img: 'https://www.bigbasket.com/media/uploads/p/xxl/40237235_3-maggi-2-minute-instant-noodles-veggie-masala-made-with-quality-spices-rich-in-fibre.jpg' },
+            { name: 'Maggie asfse23', price: '$12.00', img: 'https://m.media-amazon.com/images/I/71Hiy0dmhlL.jpg' },
+            { name: 'Maggie 4eerwr', price: '$12.00', img: 'https://m.media-amazon.com/images/I/71Hiy0dmhlL.jpg' },
+            { name: 'Maggie v nbsj', price: '$12.00', img: 'https://m.media-amazon.com/images/I/8116o8ISrfL._AC_UF894,1000_QL80_.jpg' },
+            { name: 'Maggie uuyayv', price: '$12.00', img: 'https://m.media-amazon.com/images/I/8116o8ISrfL._AC_UF894,1000_QL80_.jpg' },
+            { name: 'Maggie ', price: '$12.00', img: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSFEjduiViaO1-iO37pKOCQuhLieeyIgpQkWm_w3Ye8epsAays5XjR0-qzucYvJzxUrcX8&usqp=CAU' },
+            { name: 'Maggie hshfyasjk', price: '$12.00', img: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSFEjduiViaO1-iO37pKOCQuhLieeyIgpQkWm_w3Ye8epsAays5XjR0-qzucYvJzxUrcX8&usqp=CAU' },
+            { name: 'Maggie mnvjnbjcx', price: '$12.00', img: 'https://i5.walmartimages.com/seo/Maggi-2-Minute-Masala-Indian-Noodles-9-87-oz_c9f57afc-a6ac-436d-8747-9f26aa0e7bf6.7a9c3c912aa17d7d48f760d3df0843a9.jpeg?odnHeight=768&odnWidth=768&odnBg=FFFFFF' },
+            { name: 'Maggie asfse23', price: '$12.00', img: 'https://i5.walmartimages.com/seo/Maggi-2-Minute-Masala-Indian-Noodles-9-87-oz_c9f57afc-a6ac-436d-8747-9f26aa0e7bf6.7a9c3c912aa17d7d48f760d3df0843a9.jpeg?odnHeight=768&odnWidth=768&odnBg=FFFFFF' },
+            { name: 'Maggie 8y42huh8', price: '$12.00', img: 'https://s3.ap-south-1.amazonaws.com/diingdong/1611308669_31W-0vUvpnL.jpg' },
+            { name: 'Maggie uuyayv', price: '$12.00', img: 'https://s3.ap-south-1.amazonaws.com/diingdong/1611308669_31W-0vUvpnL.jpg' },
+            { name: 'Maggie nsdjyw98z', price: '$12.00', img: 'https://www.maggi.in/sites/default/files/styles/product_image_tab_landscape_384_768/public/maggi-masala-veg-617x900.png?itok=GkuxfCFm' },
+            { name: 'Maggie v nbsj', price: '$12.00', img: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSFEjduiViaO1-iO37pKOCQuhLieeyIgpQkWm_w3Ye8epsAays5XjR0-qzucYvJzxUrcX8&usqp=CAU' },
+            { name: 'Maggie dsf43', price: '$12.00', img: 'https://m.media-amazon.com/images/I/81dpDHc95AL._SL1500_.jpg' },
+            { name: 'Maggie 4eerwr', price: '$12.00', img: 'https://m.media-amazon.com/images/I/71hAp8MqgSL.jpg' },
+            { name: 'Maggie ', price: '$12.00', img: 'https://m.media-amazon.com/images/I/8116o8ISrfL._AC_UF894,1000_QL80_.jpg' },
+            { name: 'Maggie mnvjnbjcx', price: '$12.00', img: 'https://5.imimg.com/data5/VO/HT/PM/SELLER-5215417/maggi-masala-cuppa-noodles-70g-500x500.jpg' },
+            { name: 'Maggie ', price: '$12.00', img: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ7sus2IB6T7WmKExjUJPuZ6MUaVLfDSCTvAQ&s' },
+            { name: 'Maggie 8y42huh8', price: '$12.00', img: 'https://www.bigbasket.com/media/uploads/p/xxl/119705_12-maggi-hot-sweet-tomato-chilli-sauce.jpg' },
+            { name: 'Maggie asfse23', price: '$12.00', img: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSFEjduiViaO1-iO37pKOCQuhLieeyIgpQkWm_w3Ye8epsAays5XjR0-qzucYvJzxUrcX8&usqp=CAU' },
+            { name: 'Maggie uuyayv', price: '$12.00', img: 'https://s3.ap-south-1.amazonaws.com/diingdong/1611308669_31W-0vUvpnL.jpg' },
+            { name: 'Maggie dsf43', price: '$12.00', img: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTzxaLh4CU-oDcXyi7jduM_Vvf65b4NiVmLxw&s' },
+            { name: 'Maggie nsdjyw98z', price: '$12.00', img: 'https://www.maggi.in/sites/default/files/styles/product_image_tab_landscape_384_768/public/maggi-masala-veg-617x900.png?itok=GkuxfCFm' },
+            { name: 'Maggie v nbsj', price: '$12.00', img: 'https://m.media-amazon.com/images/I/71hAp8MqgSL.jpg' },
+            { name: 'Maggie mnvjnbjcx', price: '$12.00', img: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTg9vMAhD5NyN-Hy7q7nqBSDG2ziHDT5ugAJA&s' },
+            { name: 'Maggie hshfyasjk', price: '$12.00', img: 'https://cdn.shopify.com/s/files/1/0627/6585/9031/products/Screenshot2022-03-03at5.55.28PM_1200x.png?v=1646301344' },
+            { name: 'Maggie dsf43', price: '$12.00', img: 'https://www.bigbasket.com/media/uploads/p/xxl/40237235_3-maggi-2-minute-instant-noodles-veggie-masala-made-with-quality-spices-rich-in-fibre.jpg' },
+            { name: 'Maggie 4eerwr ', price: '$12.00', img: 'https://www.maggi.in/sites/default/files/styles/product_image_tab_landscape_384_768/public/maggi-masala-veg-617x900.png?itok=GkuxfCFm' },
+            { name: 'Maggie uuyayv', price: '$12.00', img: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSFEjduiViaO1-iO37pKOCQuhLieeyIgpQkWm_w3Ye8epsAays5XjR0-qzucYvJzxUrcX8&usqp=CAU' },
+            { name: 'Maggie mnvjnbjcx', price: '$12.00', img: 'https://s3.ap-south-1.amazonaws.com/diingdong/1611308669_31W-0vUvpnL.jpg' },
+            { name: 'Maggie ', price: '$12.00', img: 'https://5.imimg.com/data5/VO/HT/PM/SELLER-5215417/maggi-masala-cuppa-noodles-70g-500x500.jpg' },
+            { name: 'Maggie 8y42huh8', price: '$12.00', img: 'https://m.media-amazon.com/images/I/81dpDHc95AL._SL1500_.jpg' },
+            { name: 'Maggie nsdjyw98z', price: '$12.00', img: 'https://m.media-amazon.com/images/I/8116o8ISrfL._AC_UF894,1000_QL80_.jpg' },
+            { name: 'Maggie dsf43', price: '$12.00', img: 'https://m.media-amazon.com/images/I/71hAp8MqgSL.jpg' },
+            { name: 'Maggie mnvjnbjcx', price: '$12.00', img: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTzxaLh4CU-oDcXyi7jduM_Vvf65b4NiVmLxw&s' },
+            { name: 'Maggie 231238123', price: '$12.00', img: 'https://www.maggi.in/sites/default/files/styles/product_image_tab_landscape_384_768/public/maggi-masala-veg-617x900.png?itok=GkuxfCFm' },
+            { name: 'Maggie uuyayv', price: '$12.00', img: 'https://www.bigbasket.com/media/uploads/p/xxl/40136266_7-maggi-special-masala-noodles.jpg'},
+            { name: 'Maggie v nbsj', price: '$12.00', img: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTg9vMAhD5NyN-Hy7q7nqBSDG2ziHDT5ugAJA&s' },
+            { name: 'Maggie hshfyasjk', price: '$12.00', img: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ7sus2IB6T7WmKExjUJPuZ6MUaVLfDSCTvAQ&s' },
+            { name: 'Maggie nsdjyw98z', price: '$12.00', img: 'https://www.bigbasket.com/media/uploads/p/xxl/40237235_3-maggi-2-minute-instant-noodles-veggie-masala-made-with-quality-spices-rich-in-fibre.jpg' },
+            { name: 'Maggie safsdfg4', price: '$12.00', img: 'https://m.media-amazon.com/images/I/71Hiy0dmhlL.jpg' },
+            { name: 'Maggie 8y42huh8', price: '$12.00', img: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTzxaLh4CU-oDcXyi7jduM_Vvf65b4NiVmLxw&s' },
+            { name: 'Maggie ', price: '$12.00', img: 'https://s3.ap-south-1.amazonaws.com/diingdong/1611308669_31W-0vUvpnL.jpg' },
+            { name: 'Maggie mnvjnbjcx', price: '$12.00', img: 'https://cdn.shopify.com/s/files/1/0627/6585/9031/products/Screenshot2022-03-03at5.55.28PM_1200x.png?v=1646301344' },
+            { name: 'Maggie dsf43', price: '$12.00', img: 'https://www.bigbasket.com/media/uploads/p/xxl/119705_12-maggi-hot-sweet-tomato-chilli-sauce.jpg' },
+            { name: 'Maggie231238123 ', price: '$12.00', img: 'https://www.maggi.in/sites/default/files/styles/product_image_tab_landscape_384_768/public/maggi-masala-veg-617x900.png?itok=GkuxfCFm' },
+            { name: 'Maggie ', price: '$12.00', img: 'https://m.media-amazon.com/images/I/81dpDHc95AL._SL1500_.jpg' },
+            { name: 'Maggie mnvjnbjcx', price: '$12.00', img: 'https://www.bigbasket.com/media/uploads/p/xxl/40136266_7-maggi-special-masala-noodles.jpg' },
+            { name: 'Maggie v nbsj', price: '$12.00', img: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ7sus2IB6T7WmKExjUJPuZ6MUaVLfDSCTvAQ&s' },
+            { name: 'Maggie uuyayv', price: '$12.00', img: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTzxaLh4CU-oDcXyi7jduM_Vvf65b4NiVmLxw&s' },
+            { name: 'Maggie nsdjyw98z', price: '$12.00', img: 'https://m.media-amazon.com/images/I/8116o8ISrfL._AC_UF894,1000_QL80_.jpg' },
+            { name: 'Maggie safsdfg4', price: '$12.00', img: 'https://m.media-amazon.com/images/I/71hAp8MqgSL.jpg' },
+            { name: 'Maggie 4eerwr', price: '$12.00', img: 'https://www.maggi.in/sites/default/files/styles/product_image_tab_landscape_384_768/public/maggi-masala-veg-617x900.png?itok=GkuxfCFm' },
+            { name: 'Maggie hshfyasjk', price: '$12.00', img: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTg9vMAhD5NyN-Hy7q7nqBSDG2ziHDT5ugAJA&s' },
+            { name: 'Maggie mnvjnbjcx', price: '$12.00', img: 'https://5.imimg.com/data5/VO/HT/PM/SELLER-5215417/maggi-masala-cuppa-noodles-70g-500x500.jpg' },
+            { name: 'Maggie ', price: '$12.00', img: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ7sus2IB6T7WmKExjUJPuZ6MUaVLfDSCTvAQ&s' },
+            { name: 'Maggie ', price: '$12.00', img: 'https://cdn.shopify.com/s/files/1/0627/6585/9031/products/Screenshot2022-03-03at5.55.28PM_1200x.png?v=1646301344' },
+            { name: 'Maggie ', price: '$12.00', img: 'https://m.media-amazon.com/images/I/81dpDHc95AL._SL1500_.jpg' },
+            { name: 'Maggie dsf43', price: '$12.00', img: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTzxaLh4CU-oDcXyi7jduM_Vvf65b4NiVmLxw&s' },
+            { name: 'Maggie 4eerwr', price: '$12.00', img: 'https://www.bigbasket.com/media/uploads/p/xxl/40237235_3-maggi-2-minute-instant-noodles-veggie-masala-made-with-quality-spices-rich-in-fibre.jpg' },
+            { name: 'Maggie uuyayv', price: '$12.00', img: 'https://m.media-amazon.com/images/I/71Hiy0dmhlL.jpg' },
+            { name: 'Maggie mnvjnbjcx', price: '$12.00', img: 'https://m.media-amazon.com/images/I/8116o8ISrfL._AC_UF894,1000_QL80_.jpg' },
+            { name: 'Maggie 8y42huh8', price: '$12.00', img: 'https://m.media-amazon.com/images/I/71hAp8MqgSL.jpg' },
+            { name: 'Maggie hshfyasjk', price: '$12.00', img: 'https://www.maggi.in/sites/default/files/styles/product_image_tab_landscape_384_768/public/maggi-masala-veg-617x900.png?itok=GkuxfCFm' },
+            { name: 'Maggie uuyayv', price: '$12.00', img: 'https://s3.ap-south-1.amazonaws.com/diingdong/1611308669_31W-0vUvpnL.jpg' },
+            { name: 'Maggie hshfyasjk', price: '$12.00', img: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTzxaLh4CU-oDcXyi7jduM_Vvf65b4NiVmLxw&s' },
+            { name: 'Maggie nsdjyw98z', price: '$12.00', img: 'https://www.bigbasket.com/media/uploads/p/xxl/40136266_7-maggi-special-masala-noodles.jpg' },
+            { name: 'Maggie safsdfg4', price: '$12.00', img: 'https://www.bigbasket.com/media/uploads/p/xxl/119705_12-maggi-hot-sweet-tomato-chilli-sauce.jpg' },
+            { name: 'Maggie dsf43', price: '$12.00', img: 'https://m.media-amazon.com/images/I/8116o8ISrfL._AC_UF894,1000_QL80_.jpg' },
+            { name: 'Maggie shfs', price: '$12.00', img: 'https://m.media-amazon.com/images/I/71hAp8MqgSL.jpg' },
+            { name: 'Maggie sdgeger', price: '$12.00', img: 'https://i5.walmartimages.com/seo/Maggi-2-Minute-Masala-Indian-Noodles-9-87-oz_c9f57afc-a6ac-436d-8747-9f26aa0e7bf6.7a9c3c912aa17d7d48f760d3df0843a9.jpeg?odnHeight=768&odnWidth=768&odnBg=FFFFFF' },
+            { name: 'Maggie dfsdf', price: '$12.00', img: 'https://www.maggi.in/sites/default/files/styles/product_image_tab_landscape_384_768/public/maggi-masala-veg-617x900.png?itok=GkuxfCFm' },
+            { name: 'Maggie efsfds', price: '$12.00', img: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ7sus2IB6T7WmKExjUJPuZ6MUaVLfDSCTvAQ&s' },
+            { name: 'Maggie sdfsdfr34', price: '$12.00', img: 'https://cdn.shopify.com/s/files/1/0627/6585/9031/products/Screenshot2022-03-03at5.55.28PM_1200x.png?v=1646301344' },
+            { name: 'Maggie 23434', price: '$12.00', img: 'https://m.media-amazon.com/images/I/81dpDHc95AL._SL1500_.jpg' },
+            { name: 'Maggie 67868', price: '$12.00', img: 'https://www.bigbasket.com/media/uploads/p/xxl/40237235_3-maggi-2-minute-instant-noodles-veggie-masala-made-with-quality-spices-rich-in-fibre.jpg' },
+            { name: 'Maggie 66768', price: '$12.00', img: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSFEjduiViaO1-iO37pKOCQuhLieeyIgpQkWm_w3Ye8epsAays5XjR0-qzucYvJzxUrcX8&usqp=CAU' },
+            { name: 'Maggie 7675', price: '$12.00', img: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTg9vMAhD5NyN-Hy7q7nqBSDG2ziHDT5ugAJA&s' },
+            { name: 'Maggie 456745', price: '$12.00', img: 'https://www.bigbasket.com/media/uploads/p/xxl/40136266_7-maggi-special-masala-noodles.jpg' },
+            { name: 'Maggie 54', price: '$12.00', img: 'https://www.maggi.in/sites/default/files/styles/product_image_tab_landscape_384_768/public/maggi-masala-veg-617x900.png?itok=GkuxfCFm' },
+            { name: 'Maggie 7696', price: '$12.00', img: 'https://i5.walmartimages.com/seo/Maggi-2-Minute-Masala-Indian-Noodles-9-87-oz_c9f57afc-a6ac-436d-8747-9f26aa0e7bf6.7a9c3c912aa17d7d48f760d3df0843a9.jpeg?odnHeight=768&odnWidth=768&odnBg=FFFFFF' },
+            { name: 'Maggie 2346234', price: '$12.00', img: 'https://s3.ap-south-1.amazonaws.com/diingdong/1611308669_31W-0vUvpnL.jpg' },
+            { name: 'Maggie 3464', price: '$12.00', img: 'https://m.media-amazon.com/images/I/8116o8ISrfL._AC_UF894,1000_QL80_.jpg' },
+            { name: 'Maggie 345436', price: '$12.00', img: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ7sus2IB6T7WmKExjUJPuZ6MUaVLfDSCTvAQ&s' },
+            { name: 'Maggie 456456', price: '$12.00', img: 'https://www.bigbasket.com/media/uploads/p/xxl/40237235_3-maggi-2-minute-instant-noodles-veggie-masala-made-with-quality-spices-rich-in-fibre.jpg' },
+            { name: 'Maggie 45646', price: '$12.00', img: 'https://www.bigbasket.com/media/uploads/p/xxl/119705_12-maggi-hot-sweet-tomato-chilli-sauce.jpg' },
+            { name: 'Maggie 56456', price: '$12.00', img: 'https://www.maggi.in/sites/default/files/styles/product_image_tab_landscape_384_768/public/maggi-masala-veg-617x900.png?itok=GkuxfCFm' },
+            { name: 'Maggie 35345', price: '$12.00', img: 'https://m.media-amazon.com/images/I/71Hiy0dmhlL.jpg' },
+            { name: 'Maggie 3534534', price: '$12.00', img: 'https://s3.ap-south-1.amazonaws.com/diingdong/1611308669_31W-0vUvpnL.jpg' },
+            { name: 'Maggie 567567', price: '$12.00', img: 'https://m.media-amazon.com/images/I/81dpDHc95AL._SL1500_.jpg' },
+            { name: 'Maggie 3534', price: '$12.00', img: 'https://cdn.shopify.com/s/files/1/0627/6585/9031/products/Screenshot2022-03-03at5.55.28PM_1200x.png?v=1646301344' },
+            { name: 'Maggie 68568', price: '$12.00', img: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTg9vMAhD5NyN-Hy7q7nqBSDG2ziHDT5ugAJA&s' },
+            { name: 'Maggie 6576', price: '$12.00', img: 'https://www.bigbasket.com/media/uploads/p/xxl/40136266_7-maggi-special-masala-noodles.jpg' },
+            { name: 'Maggie 546456', price: '$12.00', img: 'https://5.imimg.com/data5/VO/HT/PM/SELLER-5215417/maggi-masala-cuppa-noodles-70g-500x500.jpg' },
+            { name: 'Maggie 23423', price: '$12.00', img: 'https://www.bigbasket.com/media/uploads/p/xxl/119705_12-maggi-hot-sweet-tomato-chilli-sauce.jpg' },
+            { name: 'Maggie 234234', price: '$12.00', img: 'https://m.media-amazon.com/images/I/81dpDHc95AL._SL1500_.jpg' },
+            { name: 'Maggie 23434', price: '$12.00', img: 'https://www.bigbasket.com/media/uploads/p/xxl/40237235_3-maggi-2-minute-instant-noodles-veggie-masala-made-with-quality-spices-rich-in-fibre.jpg' },
+            { name: 'Maggie 12423', price: '$12.00', img: 'https://m.media-amazon.com/images/I/71Hiy0dmhlL.jpg' },
+            
+           
+        ];
+
+        function displayProducts(productList) {
+            const productContainer = document.getElementById('product-list');
+            productContainer.innerHTML = '';
+            productList.forEach(product => {
+                const productElement = document.createElement('div');
+                productElement.className = 'product';
+                productElement.innerHTML = `
+                    <img src="${product.img}" alt="${product.name}">
+                    <h2>${product.name}</h2>
+                    <p>${product.price}</p>
+                    <button onclick="addToCart('${product.name}', '${product.price}', '${product.img}')">Add to Cart</button>
+                `;
+                productContainer.appendChild(productElement);
+            });
+        }
+
+        function searchProducts() {
+            const searchInput = document.getElementById('search-input').value.toLowerCase();
+            const filteredProducts = products.filter(product => 
+                product.name.toLowerCase().includes(searchInput)
+            );
+            displayProducts(filteredProducts);
+        }
+
+        const cart = [];
+
+        function addToCart(name, price, img) {
+            cart.push({ name, price, img });
+            updateCartUI();
+        }
+
+        function updateCartUI() {
+            const cartBox = document.getElementById('cart-box');
+            const cartItems = document.getElementById('cart-items');
+            const cartCount = document.getElementById('cart-count');
+            const cartTotal = document.getElementById('cart-total');
+
+            cartItems.innerHTML = '';
+            let total = 0;
+            cart.forEach((item, index) => {
+                total += parseFloat(item.price.slice(1));
+                const itemElement = document.createElement('li');
+                itemElement.innerHTML = `
+                    <img src="${item.img}" alt="${item.name}">
+                    <span>${item.name}</span>
+                    <span>${item.price}</span>
+                    <button onclick="removeFromCart(${index})">Delete</button>
+                `;
+                cartItems.appendChild(itemElement);
+            });
+
+            cartCount.innerText = cart.length;
+            cartTotal.innerText = total.toFixed(2);
+        }
+
+        function removeFromCart(index) {
+            cart.splice(index, 1);
+            updateCartUI();
+        }
+
+        function toggleCart() {
+            const cartBox = document.getElementById('cart-box');
+            cartBox.classList.toggle('active');
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            displayProducts(products);
+        });
+    </script>
+</body>
+</html>
